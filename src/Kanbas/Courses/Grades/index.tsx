@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaFileImport, FaFileExport, FaCog } from 'react-icons/fa';
 
 const Grades = () => {
+  const [grade, setGrade] = useState<number | string>(88.03);
+
+  const handleIncrement = () => {
+    setGrade((prevGrade) => (typeof prevGrade === 'number' && prevGrade < 100 ? prevGrade + 1 : prevGrade));
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const parsedValue = parseFloat(value);
+
+    if (value === '') {
+      setGrade('');
+    } else if (!isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
+      setGrade(parsedValue);
+    }
+  };
+
   return (
     <div className="container my-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -50,25 +67,32 @@ const Grades = () => {
             <td>66.22%</td>
           </tr>
           <tr>
-            <td>Christina Allen</td>
+            <td className="text-danger">Christina Allen</td>
             <td>100%</td>
             <td>100%</td>
             <td>100%</td>
             <td>100%</td>
           </tr>
           <tr>
-            <td>Samreen Ansari</td>
+            <td className="text-danger">Samreen Ansari</td>
             <td>100%</td>
             <td>100%</td>
             <td>100%</td>
             <td>100%</td>
           </tr>
           <tr>
-            <td>Han Bao</td>
+            <td className="text-danger">Han Bao</td>
             <td>100%</td>
             <td>100%</td>
-            <td>
-              <input type="text" className="form-control text-center" defaultValue="88.03" />
+            <td className="d-flex align-items-center">
+              <input
+                type="text"
+                className="form-control text-center"
+                value={grade}
+                onChange={handleChange}
+                inputMode="numeric"
+              />
+              <button className="btn btn-light ms-1" onClick={handleIncrement}>+</button>
             </td>
             <td>98.99%</td>
           </tr>
@@ -80,7 +104,7 @@ const Grades = () => {
             <td>100%</td>
           </tr>
           <tr>
-            <td>Siran Cao</td>
+            <td className="text-danger">Siran Cao</td>
             <td>100%</td>
             <td>100%</td>
             <td>100%</td>
