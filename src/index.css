@@ -21,13 +21,13 @@ html, body, #root {
 #wd-kanbas-navigation {
   position: fixed;
   height: 100%;
-  width: 110px; /* Set an appropriate width for your sidebar */
-  background-color: black; /* Ensure the background color is set */
+  width: 110px;
+  background-color: black; 
 }
 
 .content-wrapper {
-  margin-left: 110px; /* This should match the width of your sidebar */
-  padding: 20px; /* Optional: to add some padding to the main content */
+  margin-left: 110px; 
+  padding: 20px; 
 }
 
 .h-100 {
@@ -35,8 +35,41 @@ html, body, #root {
 }
 
 .card {
-  width: 250px; /* Fixed width between 250px and 270px */
-  margin: 5px 5px; /* White spacing between cards */
+  width: 250px; 
+  margin: 5px 5px; 
 }
+
+/* Add this to your index.css or a relevant CSS file */
+
+/* Custom styles for the form */
+#wd-assignments-editor {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+#wd-description {
+  height: auto;
+  white-space: pre-wrap;
+}
+
+textarea {
+  resize: none;
+}
+
+.d-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+}
+
+fieldset {
+  padding: 10px;
+}
+
+fieldset legend {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 
 
