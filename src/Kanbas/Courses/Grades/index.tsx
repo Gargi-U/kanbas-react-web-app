@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router";
+import { useState, useEffect } from 'react';
 import { FaFileImport, FaFileExport, FaCog } from 'react-icons/fa';
 import { enrollments, grades, users, assignments as assignmentsData } from '../../Database';
 
 const Grades = () => {
+  const { cid } = useParams();
   const [students, setStudents] = useState<any[]>([]);
   const [gradesData, setGrades] = useState<any[]>([]);
   const [courseAssignments, setAssignments] = useState<any[]>([]);
-  // const [grade, setGrade] = useState<number | string>(88.03);
 
   useEffect(() => {
-    const courseId = "CS1234"; // Replace with dynamic ID from context/route
+    const courseId = cid;
 
     // Retrieve course enrollments
     const courseEnrollments = enrollments.filter(enrollment => enrollment.course === courseId);
@@ -38,22 +39,7 @@ const Grades = () => {
     console.log("Students:", courseStudents);
     console.log("Grades:", courseGrades);
     console.log("Assignments:", courseAssignments);
-  }, []);
-
-  // const handleIncrement = () => {
-  //   setGrade((prevGrade) => (typeof prevGrade === 'number' && prevGrade < 100 ? prevGrade + 1 : prevGrade));
-  // };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   const parsedValue = parseFloat(value);
-
-  //   if (value === '') {
-  //     setGrade('');
-  //   } else if (!isNaN(parsedValue) && parsedValue >= 0 && parsedValue <= 100) {
-  //     setGrade(parsedValue);
-  //   }
-  // };
+  }, [cid]); // Include cid in the dependency array
 
   return (
     <div className="container my-4">
