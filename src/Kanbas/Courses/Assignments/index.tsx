@@ -1,28 +1,18 @@
-import React from 'react';
+import { useParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import AssignmentControls from './AssignmentControls';
 import AssignmentListItem from './AssignmentListItem';
-
-const assignments = [
-  {
-    title: 'A1 - ENV + HTML',
-    link: '#/Kanbas/Courses/1234/Assignments/1',
-    details: 'Multiple Modules | Not available until May 6 at 12:00am | Due May 13 at 11:59pm | 100 pts'
-  },
-  {
-    title: 'A2 - CSS + BOOTSTRAP',
-    link: '#/Kanbas/Courses/1234/Assignments/2',
-    details: 'Multiple Modules | Not available until May 13 at 12:00am | Due May 20 at 11:59pm | 100 pts'
-  },
-  {
-    title: 'A3 - JAVASCRIPT + REACT',
-    link: '#/Kanbas/Courses/1234/Assignments/3',
-    details: 'Multiple Modules | Not available untilMay 20 at 12:00am | Due May 27 at 11:59pm | 100 pts'
-  }
-];
+import assignmentsData from '../../Database/assignments.json';
 
 export default function Assignments() {
+  const { cid } = useParams();
+  console.log("Course ID from URL:", cid);
+
+  const courseAssignments = assignmentsData.assignments.find(
+    (course: any) => course.courseId === cid
+  )?.assignments || [];
+
   return (
     <div id="wd-assignments" className="p-3">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -51,8 +41,15 @@ export default function Assignments() {
         </div>
       </div>
       <ul id="wd-assignment-list" className="list-group">
-        {assignments.map((assignment, index) => (
-          <AssignmentListItem key={index} assignment={assignment} />
+        {courseAssignments.map((assignment: any) => (
+          <AssignmentListItem
+            key={assignment.id}
+            assignment={{
+              title: assignment.title,
+              link: `#/Kanbas/Courses/${cid}/Assignments/${assignment.id}`,
+              details: `${assignment.description} | Due: ${new Date(assignment.dueDate).toLocaleString()} | Points: ${assignment.points}`
+            }}
+          />
         ))}
       </ul>
     </div>
