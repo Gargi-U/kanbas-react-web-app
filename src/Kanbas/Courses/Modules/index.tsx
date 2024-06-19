@@ -1,100 +1,56 @@
-import React from 'react';
+import { useParams } from "react-router";
+import * as db from "../../Database";
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
 
 export default function Modules() {
+  const { cid } = useParams();
+  console.log("Course ID from URL:", cid);
+
+  const modules = db.modules;
+  console.log("All modules from database:", modules);
+
+  // Find the course with the given cid and get its modules
+  const course = modules.find((course: any) => course._id === cid);
+  const courseModules = course ? course.modules : [];
+
   return (
     <div id="wd-modules">
-      <ModulesControls /><br /><br /><br /><br />
+      <ModulesControls />
+      <br />
+      <br />
+      <br />
+      <br />
       <ul id="wd-modules" className="list-group rounded-0">
-        <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title p-3 ps-2 bg-secondary">
-            <BsGripVertical className="me-2 fs-3" />
-            Week 1
-            <ModuleControlButtons />
-          </div>
-          <ul className="wd-lessons list-group rounded-0">
-            <li className="wd-lesson list-group-item p-3 ps-1">
-              <strong data-toggle="collapse" data-target="#learningObjectives1">
-                <BsGripVertical className="me-2 fs-3" />
-                LEARNING OBJECTIVES
-                <LessonControlButtons />
-              </strong>
-              <div id="learningObjectives1" className="collapse">
-                <ul>
-                  <li>Introduction to the course</li>
-                  <li>Learn what is Web Development</li>
-                </ul>
-              </div>
-            </li>
-            <li className="wd-lesson list-group-item p-3 ps-1">
-              <strong data-toggle="collapse" data-target="#reading1">
-                <BsGripVertical className="me-2 fs-3" />
-                READING
-                <LessonControlButtons />
-              </strong>
-              <div id="reading1" className="collapse">
-                <ul>
-                  <li>Full Stack Developer - Chapter 1 - Introduction</li>
-                  <li>Full Stack Developer - Chapter 2 - Creating User Interfaces</li>
-                </ul>
-              </div>
-            </li>
-            <li className="wd-lesson list-group-item p-3 ps-1">
-              <strong data-toggle="collapse" data-target="#slides1">
-                <BsGripVertical className="me-2 fs-3" />
-                SLIDES
-                <LessonControlButtons />
-              </strong>
-              <div id="slides1" className="collapse">
-                <ul>
-                  <li>Introduction to Web Development</li>
-                  <li>Creating an HTTP server with Node.js</li>
-                  <li>Creating a React Application</li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </li>
-
-        <li className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title p-3 ps-2 bg-secondary">
-            <BsGripVertical className="me-2 fs-3" />
-            Week 2
-            <ModuleControlButtons />
-          </div>
-          <ul className="wd-lessons list-group rounded-0">
-            <li className="wd-lesson list-group-item p-3 ps-1">
-              <strong data-toggle="collapse" data-target="#learningObjectives2">
-                <BsGripVertical className="me-2 fs-3" />
-                LEARNING OBJECTIVES
-                <LessonControlButtons />
-              </strong>
-              <div id="learningObjectives2" className="collapse">
-                <ul>
-                  <li>Learn how to create user interfaces with HTML</li>
-                  <li>Deploy the assignment to Netlify</li>
-                </ul>
-              </div>
-            </li>
-            <li className="wd-lesson list-group-item p-3 ps-1">
-              <strong data-toggle="collapse" data-target="#slides2">
-                <BsGripVertical className="me-2 fs-3" />
-                SLIDES
-                <LessonControlButtons />
-              </strong>
-              <div id="slides2" className="collapse">
-                <ul>
-                  <li>Introduction to HTML and the DOM</li>
-                  <li>Formatting Web content with Headings and Titles</li>
-                  <li>Formatting content with Lists and Tables</li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </li>
+        {courseModules.map((module: any) => (
+          <li key={module._id} className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
+            <div className="wd-title p-3 ps-2 bg-secondary">
+              <BsGripVertical className="me-2 fs-3" />
+              {module.name}
+              <ModuleControlButtons />
+            </div>
+            {module.lessons && (
+              <ul className="wd-lessons list-group rounded-0">
+                {module.lessons.map((lesson: any) => (
+                  <li key={lesson._id} className="wd-lesson list-group-item p-3 ps-1">
+                    <strong data-bs-toggle="collapse" data-bs-target={`#${lesson._id}`}>
+                      <BsGripVertical className="me-2 fs-3" />
+                      {lesson.name}
+                      <LessonControlButtons />
+                    </strong>
+                    <div id={lesson._id} className="collapse">
+                      <ul>
+                        <li>{lesson.description}</li>
+                      </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   );
