@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { addTodo, updateTodo, setTodo } from "./todosReducer";
 
 export default function TodoForm({ }: {

@@ -1,50 +1,75 @@
 import { useParams } from "react-router";
+import { useState, useEffect } from "react";
 import * as db from "../../Database";
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
 
+
 export default function Modules() {
   const { cid } = useParams();
   console.log("Course ID from URL:", cid);
 
-  const modules = db.modules;
-  console.log("All modules from database:", modules);
+  // Using 'any[]' to specify that modules is an array of any type of objects
+  const [modules, setModules] = useState<any[]>([]);
+  const [moduleName, setModuleName] = useState("");
 
-  // Find the course with the given cid and get its modules
-  const course = modules.find((course: any) => course._id === cid);
-  const courseModules = course ? course.modules : [];
+  useEffect(() => {
+    // Simulate fetching modules from database
+    const course = db.modules.find((course: any) => course._id === cid);
+    const fetchedModules = course ? course.modules : [];
+    setModules(fetchedModules);
+  }, [cid]);
+
+  const addModule = () => {
+    const newModule = {
+      _id: `mod_${new Date().getTime()}`,
+      name: moduleName,
+      lessons: []
+    };
+    setModules([...modules, newModule]);
+    setModuleName(""); // Reset input after adding
+  };
+
+  const deleteModule = (moduleId: string) => {
+    const updatedModules = modules.filter(module => module._id !== moduleId);
+    setModules(updatedModules);
+  };
+
+  const editModule = (moduleId: string, newName: string) => {
+    const updatedModules = modules.map(module =>
+      module._id === moduleId ? { ...module, name: newName } : module
+    );
+    setModules(updatedModules);
+  };
 
   return (
     <div id="wd-modules">
-      <ModulesControls />
-      <br />
-      <br />
-      <br />
-      <br />
-      <ul id="wd-modules" className="list-group rounded-0">
-        {courseModules.map((module: any) => (
-          <li key={module._id} className="wd-module list-group-item p-0 mb-5 fs-5 border-gray">
-            <div className="wd-title p-3 ps-2 bg-secondary">
-              <BsGripVertical className="me-2 fs-3" />
-              {module.name}
-              <ModuleControlButtons />
+      <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
+      <br /><br /><br /><br />
+      <ul className="list-group rounded-0">
+        {modules.map((module: any) => (
+          <li key={module._id} className="list-group-item p-0 mb-5 fs-5 border-gray">
+            <div className="p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+              <span>
+                <BsGripVertical className="me-2 fs-3" />
+                {module.name}
+              </span>
+              <ModuleControlButtons
+                moduleId={module._id}
+                deleteModule={deleteModule}
+                editModule={(newName: string) => editModule(module._id, newName)}
+              />
             </div>
             {module.lessons && (
-              <ul className="wd-lessons list-group rounded-0">
+              <ul className="list-group rounded-0">
                 {module.lessons.map((lesson: any) => (
-                  <li key={lesson._id} className="wd-lesson list-group-item p-3 ps-1">
+                  <li key={lesson._id} className="list-group-item p-3 ps-1">
                     <strong data-bs-toggle="collapse" data-bs-target={`#${lesson._id}`}>
-                      <BsGripVertical className="me-2 fs-3" />
                       {lesson.name}
                       <LessonControlButtons />
                     </strong>
-                    <div id={lesson._id} className="collapse">
-                      <ul>
-                        <li>{lesson.description}</li>
-                      </ul>
-                    </div>
                   </li>
                 ))}
               </ul>
