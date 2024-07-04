@@ -1,75 +1,96 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import * as db from "../../Database";
+import { useSelector, useDispatch } from 'react-redux';
+import { addModule, deleteModule, updateModule } from './reducer';
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
-
+import * as db from "../../Database";
 
 export default function Modules() {
-  const { cid } = useParams();
-  console.log("Course ID from URL:", cid);
-
-  // Using 'any[]' to specify that modules is an array of any type of objects
+  const { cid } = useParams<string>();
+  const dispatch = useDispatch();
+  
+  // Local state for course-specific modules
   const [modules, setModules] = useState<any[]>([]);
   const [moduleName, setModuleName] = useState("");
 
+  // Fetch and set modules specific to the course ID
   useEffect(() => {
-    // Simulate fetching modules from database
     const course = db.modules.find((course: any) => course._id === cid);
-    const fetchedModules = course ? course.modules : [];
+    const fetchedModules = course ? course.modules.map((module: any) => ({ ...module, showLessons: false })) : [];
     setModules(fetchedModules);
   }, [cid]);
 
-  const addModule = () => {
-    const newModule = {
-      _id: `mod_${new Date().getTime()}`,
-      name: moduleName,
-      lessons: []
-    };
-    setModules([...modules, newModule]);
-    setModuleName(""); // Reset input after adding
+  const handleAddModule = () => {
+    if (moduleName.trim()) {
+      const newModule = {
+        _id: `mod_${new Date().getTime()}`,
+        name: moduleName,
+        course: cid,  
+        lessons: [],
+        showLessons: false
+      };
+      dispatch(addModule(newModule)); 
+      setModules(prev => [...prev, newModule]);  
+      setModuleName(""); 
+    }
   };
 
-  const deleteModule = (moduleId: string) => {
-    const updatedModules = modules.filter(module => module._id !== moduleId);
-    setModules(updatedModules);
+  const handleDeleteModule = (moduleId: string) => {
+    dispatch(deleteModule(moduleId));  
+    setModules(prev => prev.filter(module => module._id !== moduleId));  
   };
 
-  const editModule = (moduleId: string, newName: string) => {
+  const handleEditModule = (moduleId: string, newName: string) => {
     const updatedModules = modules.map(module =>
       module._id === moduleId ? { ...module, name: newName } : module
     );
-    setModules(updatedModules);
+    dispatch(updateModule({ _id: moduleId, name: newName }));  
+    setModules(updatedModules);  
+  };
+
+  const toggleLessons = (moduleId: string) => {
+    setModules(prevModules => 
+      prevModules.map(module => 
+        module._id === moduleId ? { ...module, showLessons: !module.showLessons } : module
+      )
+    );
   };
 
   return (
     <div id="wd-modules">
-      <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
+      <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} />
       <br /><br /><br /><br />
       <ul className="list-group rounded-0">
         {modules.map((module: any) => (
           <li key={module._id} className="list-group-item p-0 mb-5 fs-5 border-gray">
             <div className="p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
-              <span>
+              <span onClick={() => toggleLessons(module._id)} style={{ cursor: 'pointer' }}>
                 <BsGripVertical className="me-2 fs-3" />
                 {module.name}
               </span>
               <ModuleControlButtons
                 moduleId={module._id}
-                deleteModule={deleteModule}
-                editModule={(newName: string) => editModule(module._id, newName)}
+                deleteModule={() => handleDeleteModule(module._id)}
+                editModule={(newName: string) => handleEditModule(module._id, newName)}
               />
             </div>
             {module.lessons && (
-              <ul className="list-group rounded-0">
+              <ul className="wd-lessons list-group rounded-0">
                 {module.lessons.map((lesson: any) => (
-                  <li key={lesson._id} className="list-group-item p-3 ps-1">
+                  <li key={lesson._id} className="wd-lesson list-group-item p-3 ps-1">
                     <strong data-bs-toggle="collapse" data-bs-target={`#${lesson._id}`}>
+                      <BsGripVertical className="me-2 fs-3" />
                       {lesson.name}
                       <LessonControlButtons />
                     </strong>
+                    <div id={lesson._id} className="collapse">
+                      <ul>
+                        <li>{lesson.description}</li>
+                      </ul>
+                    </div>
                   </li>
                 ))}
               </ul>
