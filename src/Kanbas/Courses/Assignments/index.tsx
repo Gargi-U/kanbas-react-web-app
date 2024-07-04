@@ -1,17 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 import AssignmentControls from './AssignmentControls';
 import AssignmentListItem from './AssignmentListItem';
-import assignmentsData from '../../Database/assignments.json';
 
 export default function Assignments() {
   const { cid } = useParams();
-  console.log("Course ID from URL:", cid);
-
-  const courseAssignments = assignmentsData.assignments.find(
-    (course: any) => course.courseId === cid
-  )?.assignments || [];
+  const assignments = useSelector((state: any) => {
+    const course = state.assignments.assignments.find((course: any) => course.courseId === cid);
+    return course ? course.assignments : [];
+  });
 
   return (
     <div id="wd-assignments" className="p-3">
@@ -25,7 +24,7 @@ export default function Assignments() {
             className="form-control"
           />
         </div>
-        <AssignmentControls />
+        <AssignmentControls courseId={cid!} />
       </div>
       <div className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
         <div className="d-flex align-items-center">
@@ -41,14 +40,15 @@ export default function Assignments() {
         </div>
       </div>
       <ul id="wd-assignment-list" className="list-group">
-        {courseAssignments.map((assignment: any) => (
+        {assignments.map((assignment: any) => (
           <AssignmentListItem
             key={assignment.id}
             assignment={{
-              title: assignment.title,
+              ...assignment,
               link: `#/Kanbas/Courses/${cid}/Assignments/${assignment.id}`,
               details: `${assignment.description} | Due: ${new Date(assignment.dueDate).toLocaleString()} | Points: ${assignment.points}`
             }}
+            courseId={cid!}
           />
         ))}
       </ul>
