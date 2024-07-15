@@ -59,3 +59,4 @@ export default function AssignmentListItem({ assignment, courseId }: { assignmen
     </li>
   );
 }
+
