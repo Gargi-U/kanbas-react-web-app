@@ -6,7 +6,7 @@ import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
-import * as db from "../../Database";
+import {createModule, findModulesForCourse} from "./client";
 
 export default function Modules() {
   const { cid } = useParams<string>();
@@ -18,29 +18,37 @@ export default function Modules() {
 
   // Fetch and set modules specific to the course ID
   useEffect(() => {
-    const course = db.modules.find((course: any) => course._id === cid);
-    const fetchedModules = course ? course.modules.map((module: any) => ({ ...module, showLessons: false })) : [];
+    fetchModules();
+  }, [cid, modules]);
+
+  async function fetchModules () {
+    if (!cid) return;
+    const modules = await findModulesForCourse(cid);
+    const fetchedModules = modules ? modules.modules.map((module: any) => ({ ...module, showLessons: false })) : [];
     setModules(fetchedModules);
-  }, [cid]);
+  };
 
   const handleAddModule = () => {
     if (moduleName.trim()) {
       const newModule = {
-        _id: `mod_${new Date().getTime()}`,
         name: moduleName,
         course: cid,  
-        lessons: [],
-        showLessons: false
+        lessons: []
       };
-      dispatch(addModule(newModule)); 
-      setModules(prev => [...prev, newModule]);  
-      setModuleName(""); 
+      if (!cid) return;
+      createModule(cid, newModule).then((_) => {
+        fetchModules();
+      }).catch((err) => {
+        console.error(err)
+      }); 
+
+      setModuleName("");
     }
   };
 
   const handleDeleteModule = (moduleId: string) => {
-    dispatch(deleteModule(moduleId));  
-    setModules(prev => prev.filter(module => module._id !== moduleId));  
+    dispatch(deleteModule(moduleId));
+    setModules(modules.filter(module => module._id !== moduleId));
   };
 
   const handleEditModule = (moduleId: string, newName: string) => {

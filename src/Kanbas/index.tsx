@@ -1,27 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Courses from "./Courses";
-import * as db from "./Database";
+import * as client from "./Courses/client";
 import { useState } from "react";
 import "./styles.css";
 import store from "./store";
 import { Provider } from "react-redux";
 
 export default function Kanbas() {
-  const [courses, setCourses] = useState<any[]>(db.courses);
+  const [courses, setCourses] = useState<any[]>([]);
+  const fetchCourses = async () => {
+    const courses = await client.fetchAllCourses();
+    setCourses(courses);
+  };
+  useEffect(() => {
+    fetchCourses();
+  }, []);
   const [course, setCourse] = useState<any>({
     _id: "1234", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description", image: "reactjs.jpg"
   });
-  const addNewCourse = () => {
-    setCourses([...courses, { ...course, _id: new Date().getTime().toString() }]);
+  const addNewCourse = async () => {
+    const newCourse = await client.createCourse(course);
+    setCourses([ ...courses, newCourse ]);
   };
-  const deleteCourse = (courseId: any) => {
-    setCourses(courses.filter((course) => course._id !== courseId));
+
+  const deleteCourse = async (courseId: string) => {
+    await client.deleteCourse(courseId);
+    setCourses(courses.filter(
+      (c) => c._id !== courseId));
   };
-  const updateCourse = () => {
+
+  const updateCourse = async () => {
+    await client.updateCourse(course);
     setCourses(
       courses.map((c) => {
         if (c._id === course._id) {
@@ -32,6 +45,7 @@ export default function Kanbas() {
       })
     );
   };
+
 
   return (
     <Provider store={store}>

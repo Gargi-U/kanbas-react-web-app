@@ -10,12 +10,12 @@ export default function ModuleControlButtons({ moduleId, deleteModule, editModul
   moduleId: string; deleteModule: (moduleId: string) => void;
   editModule: (moduleId: string) => void }) {
   return (
-    <div className="float-end d-flex align-items-center">
-      <FaPencil onClick={() => editModule(moduleId)} className="text-primary me-3" />
+    <div className="float-end d-flex flex-row align-items-center ">
+      <FaPencil onClick={() => editModule(moduleId)} className="text-primary me-2 mb-1" />
       <FaTrash className="text-danger me-2 mb-1" onClick={() => deleteModule(moduleId)}/>
       <GreenCheckmark/>
-      <BsPlus className="fs-4" />
-      <IoEllipsisVertical className="fs-4" />
+      <BsPlus className="me-1 mb-1" />
+      <IoEllipsisVertical className="me-2 mb-1" />
     </div>
   );
 }
