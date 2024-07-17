@@ -1,7 +1,7 @@
 import React, { useState } from "react";
- 
+
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
- 
+
 export default function WorkingWithObjects() {
   const [assignment, setAssignment] = useState({
     id: 1,
@@ -11,21 +11,21 @@ export default function WorkingWithObjects() {
     completed: false,
     score: 0,
   });
- 
+
   const [module, setModule] = useState({
     id: 1,
     name: "Machine Learning",
     description: "Introduction to Machine Learning",
     course: "CS1237",
   });
- 
+
   const ASSIGNMENT_API_URL = `${REMOTE_SERVER}/lab5/assignment`;
   const MODULE_API_URL = `${REMOTE_SERVER}/lab5/module`;
- 
+
   return (
     <div id="wd-working-with-objects">
       <h3>Working With Objects</h3>
- 
+
       <h4>Retrieving Objects</h4>
       <a
         id="wd-retrieve-assignments"
@@ -42,7 +42,7 @@ export default function WorkingWithObjects() {
         Get Module
       </a>
       <hr />
- 
+
       <h4>Retrieving Properties</h4>
       <a
         id="wd-retrieve-assignment-title"
@@ -59,7 +59,7 @@ export default function WorkingWithObjects() {
         Get Module Name
       </a>
       <hr />
- 
+
       <h4>Modifying Properties</h4>
       <input
         className="form-control w-75 mb-2"
@@ -76,7 +76,7 @@ export default function WorkingWithObjects() {
       >
         Update Title
       </a>
- 
+
       <input
         className="form-control w-75 mt-2 mb-2"
         id="wd-assignment-score"
@@ -93,7 +93,7 @@ export default function WorkingWithObjects() {
       >
         Update Score
       </a>
- 
+
       <div className="form-check mt-2 mb-2">
         <input
           className="form-check-input"
@@ -116,7 +116,7 @@ export default function WorkingWithObjects() {
         Update Completed
       </a>
       <hr />
- 
+
       <input
         className="form-control w-75 mb-2"
         id="wd-module-name"
@@ -130,7 +130,7 @@ export default function WorkingWithObjects() {
       >
         Update Module Name
       </a>
- 
+
       <input
         className="form-control w-75 mt-2 mb-2"
         id="wd-module-description"

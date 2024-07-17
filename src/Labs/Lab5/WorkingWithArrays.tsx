@@ -1,7 +1,7 @@
 import React, { useState } from "react";
- 
+
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
- 
+
 export default function WorkingWithArrays() {
   const API = `${REMOTE_SERVER}/lab5/todos`;
   const [todo, setTodo] = useState({
@@ -11,23 +11,23 @@ export default function WorkingWithArrays() {
     due: "2021-09-09",
     completed: false,
   });
- 
+
   const [updateTodo, setUpdateTodo] = useState({
     id: "",
     description: "",
     completed: false,
   });
- 
+
   return (
     <div id="wd-working-with-arrays">
       <h3>Working with Arrays</h3>
- 
+
       <h4>Retrieving Arrays</h4>
       <a id="wd-retrieve-todos" className="btn btn-primary" href={API}>
         Get Todos{" "}
       </a>
       <hr />
- 
+
       <h4>Retrieving an Item from an Array by ID</h4>
       <a
         id="wd-retrieve-todo-by-id"
@@ -43,7 +43,7 @@ export default function WorkingWithArrays() {
         onChange={(e) => setTodo({ ...todo, id: e.target.value })}
       />
       <hr />
- 
+
       <h3>Filtering Array Items</h3>
       <a
         id="wd-retrieve-completed-todos"
@@ -53,13 +53,13 @@ export default function WorkingWithArrays() {
         Get Completed Todos
       </a>
       <hr />
- 
+
       <h3>Creating new Items in an Array</h3>
       <a id="wd-create-todo" className="btn btn-primary" href={`${API}/create`}>
         Create Todo
       </a>
       <hr />
- 
+
       <h3>Deleting from an Array</h3>
       <a
         id="wd-delete-todo"
@@ -74,7 +74,7 @@ export default function WorkingWithArrays() {
         onChange={(e) => setTodo({ ...todo, id: e.target.value })}
       />
       <hr />
- 
+
       <h3>Updating an Item in an Array</h3>
       <a
         href={`${API}/${todo.id}/title/${todo.title}`}
@@ -95,7 +95,7 @@ export default function WorkingWithArrays() {
       <br />
       <br />
       <hr />
- 
+
       <h3>Updating Description and Completed Properties</h3>
       <a
         href={`${API}/${updateTodo.id}/description/${updateTodo.description}`}
@@ -120,7 +120,7 @@ export default function WorkingWithArrays() {
       <br />
       <br />
       <hr />
- 
+
       <a
         href={`${API}/${updateTodo.id}/completed/${updateTodo.completed}`}
         className="btn btn-primary float-end"
