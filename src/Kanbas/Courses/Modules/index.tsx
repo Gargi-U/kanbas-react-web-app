@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { useDispatch } from 'react-redux';
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
@@ -9,7 +8,6 @@ import {createModule, findModulesForCourse, deleteModule, updateModule} from "./
 
 export default function Modules() {
   const { cid } = useParams<string>();
-  const dispatch = useDispatch();
   
   // Local state for course-specific modules
   const [modules, setModules] = useState<any[]>([]);
