@@ -1,12 +1,11 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { addModule, deleteModule, updateModule } from './reducer';
+import { useDispatch } from 'react-redux';
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
-import {createModule, findModulesForCourse} from "./client";
+import {createModule, findModulesForCourse, deleteModule, updateModule} from "./client";
 
 export default function Modules() {
   const { cid } = useParams<string>();
@@ -15,6 +14,9 @@ export default function Modules() {
   // Local state for course-specific modules
   const [modules, setModules] = useState<any[]>([]);
   const [moduleName, setModuleName] = useState("");
+
+  const [editingModuleId, setEditingModuleId] = useState("");
+  const [editedName, setEditedName] = useState("");
 
   // Fetch and set modules specific to the course ID
   useEffect(() => {
@@ -46,17 +48,30 @@ export default function Modules() {
     }
   };
 
+  // delete module by ID
   const handleDeleteModule = (moduleId: string) => {
-    dispatch(deleteModule(moduleId));
-    setModules(modules.filter(module => module._id !== moduleId));
+    deleteModule(moduleId).then((_) => {
+      setModules(modules.filter(module => module._id !== moduleId));
+    }).catch((err) => {
+      console.error(err);
+    });
   };
 
-  const handleEditModule = (moduleId: string, newName: string) => {
-    const updatedModules = modules.map(module =>
-      module._id === moduleId ? { ...module, name: newName } : module
-    );
-    dispatch(updateModule({ _id: moduleId, name: newName }));  
-    setModules(updatedModules);  
+  
+  // edit module by ID
+  const handleEditModule = (moduleId: string) => {
+    if (editedName.trim()) {
+      const updatedModule = modules.find(module => module._id === moduleId);
+      if (!updatedModule) return;
+      updatedModule.name = editedName;
+      updateModule(updatedModule).then((_) => {
+        setModules(modules.map(module => module._id === moduleId ? updatedModule : module));
+        setEditingModuleId(""); // Reset editing state
+        setEditedName(""); // Reset edited name
+      }).catch((err) => {
+        console.error(err);
+      });
+    }
   };
 
   const toggleLessons = (moduleId: string) => {
@@ -74,15 +89,24 @@ export default function Modules() {
       <ul className="list-group rounded-0">
         {modules.map((module: any) => (
           <li key={module._id} className="list-group-item p-0 mb-5 fs-5 border-gray">
-            <div className="p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
-              <span onClick={() => toggleLessons(module._id)} style={{ cursor: 'pointer' }}>
-                <BsGripVertical className="me-2 fs-3" />
-                {module.name}
-              </span>
+          <div className="p-3 ps-2 bg-secondary d-flex justify-content-between align-items-center">
+            <span onClick={() => toggleLessons(module._id)} style={{ cursor: 'pointer' }}>
+              <BsGripVertical className="me-2 fs-3" />
+              {editingModuleId === module._id ? (
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  onBlur={() => handleEditModule(module._id)}
+                />
+              ) : (
+                module.name
+              )}
+            </span>
               <ModuleControlButtons
                 moduleId={module._id}
                 deleteModule={() => handleDeleteModule(module._id)}
-                editModule={(newName: string) => handleEditModule(module._id, newName)}
+                editModule={() => setEditingModuleId(module._id)}
               />
             </div>
             {module.lessons && (
