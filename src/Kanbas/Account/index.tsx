@@ -6,6 +6,8 @@ import Profile from "./Profile";
 import Signup from "./Signup";
 
 export default function Account() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
   return (
     <div className="wd-account-screen">
       <div className="d-flex">
@@ -16,8 +18,7 @@ export default function Account() {
           <Routes>
             <Route
               path="/"
-              element={<Navigate to="/Kanbas/Account/Signin" />}
-            />
+              element={<Navigate to={currentUser ? "/Kanbas/Account/Profile" : "/Kanbas/Account/Signin"} />} />
             <Route path="/Signin" element={<Signin />} />
             <Route path="/Signup" element={<Signup />} />
             <Route path="/Profile" element={<Profile />} />
