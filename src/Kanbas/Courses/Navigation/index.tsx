@@ -10,6 +10,7 @@ const links = [
   { text: "Assignments", path: "Assignments" },
   { text: "Quizzes", path: "Quizzes" },
   { text: "Grades", path: "Grades" },
+  { text: "People", path: "People" },
 ];
 
 export default function CoursesNavigation() {
